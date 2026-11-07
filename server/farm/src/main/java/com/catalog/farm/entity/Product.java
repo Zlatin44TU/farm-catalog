@@ -32,6 +32,9 @@ public class Product {
 	@Column (nullable = false)
 	private Long farm_id; //todo make reference to farm table
 	
+	@Column(nullable = false)
+    private Long categoryId;
+
 	@Column (nullable = false, length = 150)
 	private String name;
 
