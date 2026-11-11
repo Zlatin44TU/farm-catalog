@@ -54,9 +54,9 @@ public class ProductService {
 	} 
 
 	private void apply(Product prod, ProductDTO req) {
-		prod.setFarm_id(req.farm_id());
+		prod.setFarm_id(req.farmId());
 		prod.setCategoryId(req.categoryId());
-		prod.setName(req.pname());
+		prod.setName(req.name());
 		prod.setDescription(req.description());
 		prod.setPrice(req.price());
 		prod.setUnit(req.unit());
