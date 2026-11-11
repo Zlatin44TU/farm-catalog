@@ -11,9 +11,9 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 
 public record ProductDTO (
-    @NotNull Long farm_id,
+    @NotNull Long farmId,
     @NotNull Long categoryId,
-    @NotBlank @Size (max = 150) String pname,
+    @NotBlank @Size (max = 150) String name,
     String description,
     @NotNull  @DecimalMin("0.00") @Digits(integer = 8, fraction = 2) BigDecimal price,
     @NotNull Unit unit,
