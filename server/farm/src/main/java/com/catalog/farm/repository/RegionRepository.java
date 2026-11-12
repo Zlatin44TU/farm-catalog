@@ -9,4 +9,5 @@ import com.catalog.farm.entity.Region;
 public interface RegionRepository 
     extends JpaRepository<Region, Long>{
 
+        Region findOneByName(String name);
 }
