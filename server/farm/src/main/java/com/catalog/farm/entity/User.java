@@ -10,6 +10,9 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -40,8 +43,12 @@ public class User {
     @Column(columnDefinition = "NOT NULL DEFAULT 'BUYER'")
     private UserRoles role = UserRoles.BUYER; // default role is BUYER
 
-    @Column(nullable = false)
-    private Long farmId; 
+    @OneToOne(mappedBy = "owner")
+    private FarmProfile ownedFarm;
+
+    @ManyToOne 
+    @JoinColumn(name = "farm_id")
+    private FarmProfile farm; // Reference to the farm the user is associated with
 
     @CreationTimestamp 
 	@Column (updatable = false)

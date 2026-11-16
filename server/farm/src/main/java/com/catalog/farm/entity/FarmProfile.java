@@ -1,6 +1,7 @@
 package com.catalog.farm.entity;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
@@ -8,7 +9,11 @@ import org.hibernate.annotations.UpdateTimestamp;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -21,12 +26,16 @@ import lombok.Setter;
 @NoArgsConstructor 
 public class FarmProfile {
     @Id 
-    @GeneratedValue(strategy = jakarta.persistence.GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private Long onwerId;
+    @ManyToOne 
+    @JoinColumn (name = "owner_id", nullable = false)
+    private User owner;
 
-    private Long regionId;
+    @ManyToOne 
+    @JoinColumn(name = "region_id", nullable = false)
+    private Region region;
 
     @Column (nullable = false, length = 150)
     private String name;
@@ -43,8 +52,14 @@ public class FarmProfile {
     @Column (length = 255)
     private String contactWebsite;
 
-    @Column (length = 255)
+    @Column (name = "img_url", length = 255)
     private String imgUrl; 
+
+    @OneToMany(mappedBy = "farm")
+    private List<User> workers; 
+
+    @OneToMany(mappedBy = "farm")
+    private List<Product> products;
 
     @CreationTimestamp 
 	@Column (updatable = false)

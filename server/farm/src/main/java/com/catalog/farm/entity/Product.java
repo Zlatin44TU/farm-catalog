@@ -12,9 +12,12 @@ import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
+import jakarta.persistence.CollectionTable;
 import jakarta.persistence.Column;
-
+import jakarta.persistence.ElementCollection;
 import lombok.NoArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
@@ -29,11 +32,13 @@ public class Product {
 	@GeneratedValue(strategy=GenerationType.IDENTITY) // if using Aiven DB service
 	private Long id;
 	
-	@Column (nullable = false)
-	private Long farm_id; //todo make reference to farm table
+	@ManyToOne 
+	@JoinColumn(name = "farm_id", nullable = false)
+	private FarmProfile farm; // Reference to the farm the product belongs to
 	
-	@Column(nullable = false)
-    private Long categoryId;
+	@ManyToOne 
+	@JoinColumn (name = "category_id", nullable = false)
+	private Category category; // Reference to the category the product belongs to
 
 	@Column (nullable = false, length = 150)
 	private String name;
@@ -55,7 +60,10 @@ public class Product {
 	private boolean available = true;
 	
 	@Column (name = "img_url", length = 255)
-	private String imgUrl;
+	private String imgUrl; 
+
+	@ElementCollection 
+	@CollectionTable (name = "product_seasonality")
 
 	@CreationTimestamp 
 	@Column (updatable = false)
