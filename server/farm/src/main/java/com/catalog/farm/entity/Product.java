@@ -2,6 +2,8 @@ package com.catalog.farm.entity;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.HashSet;
+import java.util.Set;
 
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
@@ -53,17 +55,20 @@ public class Product {
 	@Column (nullable = false)
 	private Unit unit;
 
-	@Column (nullable = false, precision = 10, scale = 2)
-	private BigDecimal stock_quantity;
+	@Column (name = "stock_quantity", nullable = false, precision = 10, scale = 2)
+	private BigDecimal stockQuantity;
 	
 	@Column (name = "is_available", nullable = false)
 	private boolean available = true;
 	
-	@Column (name = "img_url", length = 255)
+	@Column (name = "image_url", length = 255)
 	private String imgUrl; 
 
 	@ElementCollection 
-	@CollectionTable (name = "product_seasonality")
+	@CollectionTable (name = "product_seasonality",
+		joinColumns = @JoinColumn(name = "product_id"))
+	@Column(name = "month_numner", nullable = false)
+	private Set<Integer> seasonMonths = new HashSet<>();
 
 	@CreationTimestamp 
 	@Column (updatable = false)
