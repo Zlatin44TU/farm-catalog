@@ -5,14 +5,17 @@ import java.time.LocalDateTime;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
-import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -31,29 +34,29 @@ public class User {
     @Column(nullable=false, unique = true, length = 100)
     private String email; 
 
+    @JsonIgnore
     @Column(nullable=false, length = 255)
     private String password; 
 
-    @Column(nullable = false, length = 150)
+    @Column(name = "full_name", nullable = false, length = 150)
     private String fullName; 
 
-    @Column(nullable = false, length = 20)
+    @Column(name = "phone_number", nullable = false, length = 20)
     private String phoneNumber; 
 
-    @Column(columnDefinition = "NOT NULL DEFAULT 'BUYER'")
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false, length = 20)
     private UserRoles role = UserRoles.BUYER; // default role is BUYER
 
-    @OneToOne(mappedBy = "owner")
-    private FarmProfile ownedFarm;
-
-    @ManyToOne 
+    @ManyToOne
     @JoinColumn(name = "farm_id")
     private FarmProfile farm; // Reference to the farm the user is associated with
 
     @CreationTimestamp 
-	@Column (updatable = false)
+	@Column (name = "created_at", updatable = false)
 	private LocalDateTime created_at;
 
 	@UpdateTimestamp 
+    @Column (name = "updated_at")
 	private LocalDateTime updated_at;
 }

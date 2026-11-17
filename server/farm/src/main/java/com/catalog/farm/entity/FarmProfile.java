@@ -67,5 +67,6 @@ public class FarmProfile {
 	private LocalDateTime created_at;
 
 	@UpdateTimestamp 
+    @Column (name = "updated_at")
 	private LocalDateTime updated_at;
 }
