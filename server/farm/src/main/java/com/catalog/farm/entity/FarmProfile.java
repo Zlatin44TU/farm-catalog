@@ -1,6 +1,7 @@
 package com.catalog.farm.entity;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.hibernate.annotations.CreationTimestamp;
@@ -29,15 +30,15 @@ public class FarmProfile {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne 
-    @JoinColumn (name = "owner_id", nullable = false)
-    private User owner;
+    // @ManyToOne 
+    // @JoinColumn (name = "owner_id", nullable = false)
+    // private User owner; // not needed for now, not logic implemented
 
     @ManyToOne 
     @JoinColumn(name = "region_id", nullable = false)
     private Region region;
 
-    @Column (nullable = false, length = 150)
+    @Column (name = "farm_name", nullable = false, length = 150)
     private String name;
 
     @Column (columnDefinition = "TEXT")
@@ -49,20 +50,20 @@ public class FarmProfile {
     @Column (length = 100)
     private String contactEmail;
 
-    @Column (length = 255)
+    @Column (name = "contact_website", length = 255)
     private String contactWebsite;
 
     @Column (name = "img_url", length = 255)
     private String imgUrl; 
 
     @OneToMany(mappedBy = "farm")
-    private List<User> workers; 
+    private List<User> members = new ArrayList<>(); 
 
     @OneToMany(mappedBy = "farm")
     private List<Product> products;
 
     @CreationTimestamp 
-	@Column (updatable = false)
+	@Column (name = "created_at", updatable = false)
 	private LocalDateTime created_at;
 
 	@UpdateTimestamp 
