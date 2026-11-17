@@ -2,7 +2,7 @@ package com.catalog.farm.dto.request;
 
 import java.math.BigDecimal;
 
-import com.catalog.farm.entity.Unit;
+import com.catalog.farm.entity.enums.Unit;
 
 import jakarta.validation.constraints.DecimalMin;
 import jakarta.validation.constraints.Digits;

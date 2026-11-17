@@ -4,7 +4,7 @@ import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 import com.catalog.farm.entity.Product;
-import com.catalog.farm.entity.Unit;
+import com.catalog.farm.entity.enums.Unit;
 
 public record ProductResponseDTO (
     Long id,
