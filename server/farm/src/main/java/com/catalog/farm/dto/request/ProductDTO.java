@@ -1,6 +1,7 @@
 package com.catalog.farm.dto.request;
 
 import java.math.BigDecimal;
+import java.util.Set;
 
 import com.catalog.farm.entity.enums.Unit;
 
@@ -19,5 +20,6 @@ public record ProductDTO (
     @NotNull Unit unit,
     @DecimalMin ("0.00") @Digits(integer = 8, fraction = 2) BigDecimal stockQuantity,
     Boolean available,
-    @Size (max = 255) String imgUrl
+    @Size (max = 255) String imgUrl,
+    @NotNull Set<Integer> seasonMonths
 ){}
