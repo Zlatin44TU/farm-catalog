@@ -5,12 +5,16 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.catalog.farm.repository.CategoryRepository;
+import com.catalog.farm.repository.FarmRepository;
 import com.catalog.farm.repository.ProductRepository;
 import com.catalog.farm.dto.response.ProductResponseDTO;
 import com.catalog.farm.dto.request.ProductDTO;
 
 import lombok.RequiredArgsConstructor;
 
+import com.catalog.farm.entity.Category;
+import com.catalog.farm.entity.FarmProfile;
 import com.catalog.farm.entity.Product;
 import com.catalog.farm.exception.ResourceNotFoundException;
 
@@ -19,7 +23,9 @@ import com.catalog.farm.exception.ResourceNotFoundException;
 @Transactional (readOnly = true)
 public class ProductService {
 	private final ProductRepository productRepository;
-	
+	private final FarmRepository farmRepository;
+	private final CategoryRepository categoryRepository;
+
 	public Page<ProductResponseDTO> getAllProducts(Pageable pageable) {
 		return this.productRepository.findAll(pageable)
 		.map(ProductResponseDTO::from);
@@ -54,13 +60,20 @@ public class ProductService {
 	} 
 
 	private void apply(Product prod, ProductDTO req) {
-		prod.setFarm_id(req.farmId());
-		prod.setCategoryId(req.categoryId());
+		FarmProfile farm = this.farmRepository.findById(req.farmId())
+			.orElseThrow(() -> new ResourceNotFoundException("Farm not found with id: " + req.farmId()));
+		
+		Category category = this.categoryRepository.findById(req.categoryId())
+			.orElseThrow(() -> new ResourceNotFoundException("Category not found with id: " + req.categoryId()));	
+
+		prod.setFarm(farm);
+		prod.setCategory(category);
 		prod.setName(req.name());
 		prod.setDescription(req.description());
 		prod.setPrice(req.price());
 		prod.setUnit(req.unit());
-		if (req.stockQuantity() != null) prod.setStock_quantity(req.stockQuantity());
+		prod.setSeasonMonths(req.seasonMonths());
+		if (req.stockQuantity() != null) prod.setStockQuantity(req.stockQuantity());
 		if (req.available() != null) prod.setAvailable(req.available());
 		prod.setImgUrl(req.imgUrl());
 	}
