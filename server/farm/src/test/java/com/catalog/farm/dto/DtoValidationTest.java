@@ -15,10 +15,12 @@ import com.catalog.farm.dto.request.BulkProductUpdateDTO;
 import com.catalog.farm.dto.request.CategoryDTO;
 import com.catalog.farm.dto.request.FarmRequestDTO;
 import com.catalog.farm.dto.request.InquiryDTO;
+import com.catalog.farm.dto.request.InquiryStatusUpdateDTO;
 import com.catalog.farm.dto.request.ProductDTO;
 import com.catalog.farm.dto.request.RegionRequestDTO;
 import com.catalog.farm.dto.request.UserLoginDTO;
 import com.catalog.farm.dto.request.UserRegisterDTO;
+import com.catalog.farm.entity.enums.InquiryStatus;
 import com.catalog.farm.entity.enums.Unit;
 import com.catalog.farm.entity.enums.UserRoles;
 
@@ -89,8 +91,32 @@ class DtoValidationTest {
         InquiryDTO valid = new InquiryDTO(1L, 2L, new BigDecimal("10.50"), "Need 10kg apples", null);
         assertTrue(validator.validate(valid).isEmpty());
 
-        InquiryDTO invalid = new InquiryDTO(-1L, null, new BigDecimal("0.00"), "a".repeat(2500), null);
-        assertFalse(validator.validate(invalid).isEmpty());
+        InquiryDTO validOverload = new InquiryDTO(2L, new BigDecimal("10.50"), "Need 10kg apples");
+        assertTrue(validator.validate(validOverload).isEmpty());
+
+        InquiryDTO invalidNegativeQuantity = new InquiryDTO(1L, 2L, new BigDecimal("-5.00"), "Message", null);
+        assertFalse(validator.validate(invalidNegativeQuantity).isEmpty());
+
+        InquiryDTO invalidZeroQuantity = new InquiryDTO(1L, 2L, new BigDecimal("0.00"), "Message", null);
+        assertFalse(validator.validate(invalidZeroQuantity).isEmpty());
+
+        InquiryDTO invalidLongMessage = new InquiryDTO(1L, 2L, new BigDecimal("10.00"), "a".repeat(1001), null);
+        assertFalse(validator.validate(invalidLongMessage).isEmpty());
+
+        InquiryDTO invalidNullProduct = new InquiryDTO(1L, null, new BigDecimal("10.00"), "Message", null);
+        assertFalse(validator.validate(invalidNullProduct).isEmpty());
+    }
+
+    @Test
+    void testInquiryStatusUpdateDTO_Validation() {
+        InquiryStatusUpdateDTO validAccepted = new InquiryStatusUpdateDTO(InquiryStatus.ACCEPTED);
+        assertTrue(validator.validate(validAccepted).isEmpty());
+
+        InquiryStatusUpdateDTO validRejected = new InquiryStatusUpdateDTO(InquiryStatus.REJECTED);
+        assertTrue(validator.validate(validRejected).isEmpty());
+
+        InquiryStatusUpdateDTO invalidNull = new InquiryStatusUpdateDTO(null);
+        assertFalse(validator.validate(invalidNull).isEmpty());
     }
 
     @Test

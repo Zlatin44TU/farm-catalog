@@ -42,9 +42,10 @@ public class SecurityConfig {
                         .requestMatchers("/api/auth/register", "/api/auth/login").permitAll()
                         // Swagger / OpenAPI docs
                         .requestMatchers("/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html").permitAll()
-                        // Explicitly protect authenticated /me and farmer-specific endpoints before
+                        // Explicitly protect authenticated /me, farmer-specific, and inquiry endpoints before
                         // public wildcards
-                        .requestMatchers("/api/auth/me", "/api/farms/me", "/api/products/my-products").authenticated()
+                        .requestMatchers("/api/auth/me", "/api/farms/me", "/api/products/my-products", "/api/inquiries/**")
+                        .authenticated()
                         // Public GET endpoints for catalog browsing
                         .requestMatchers(HttpMethod.GET, "/api/products/**", "/api/farms/**", "/api/categories/**",
                                 "/api/regions/**")

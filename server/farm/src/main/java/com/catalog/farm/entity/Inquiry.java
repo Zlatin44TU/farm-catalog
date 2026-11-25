@@ -20,7 +20,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import com.catalog.farm.entity.enums.Stauts;
+import com.catalog.farm.entity.enums.InquiryStatus;
 
 @Entity 
 @Table (name = "inquiries")
@@ -40,14 +40,14 @@ public class Inquiry {
 
     @Enumerated(EnumType.STRING)
     @Column (nullable = false, length = 15)
-    private Stauts status = Stauts.PENDING; // Default status is PENDING
+    private InquiryStatus status = InquiryStatus.PENDING; // Default status is PENDING
 
     @ManyToOne 
-    @JoinColumn (name = "buyer_id")
+    @JoinColumn (name = "buyer_id", nullable = false)
     private User user; // Reference to the user who made the inquiry
 
     @ManyToOne 
-    @JoinColumn (name = "product_id")
+    @JoinColumn (name = "product_id", nullable = false)
     private Product product; // Reference to the product the inquiry is about 
 
     @CreationTimestamp 

@@ -4,7 +4,7 @@ import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 import com.catalog.farm.entity.Inquiry;
-import com.catalog.farm.entity.enums.Stauts;
+import com.catalog.farm.entity.enums.InquiryStatus;
 import com.catalog.farm.entity.enums.Unit;
 
 public record InquiryResponseDTO(
@@ -16,9 +16,11 @@ public record InquiryResponseDTO(
     Long productId,
     String productName,
     Unit productUnit,
+    Long farmId,
+    String farmName,
     BigDecimal requestedQuantity,
     String message,
-    Stauts status,
+    InquiryStatus status,
     LocalDateTime createdAt,
     LocalDateTime updatedAt
 ) {
@@ -35,6 +37,13 @@ public record InquiryResponseDTO(
         String productName = inquiry.getProduct() != null ? inquiry.getProduct().getName() : null;
         Unit productUnit = inquiry.getProduct() != null ? inquiry.getProduct().getUnit() : null;
 
+        Long farmId = (inquiry.getProduct() != null && inquiry.getProduct().getFarm() != null)
+                ? inquiry.getProduct().getFarm().getId()
+                : null;
+        String farmName = (inquiry.getProduct() != null && inquiry.getProduct().getFarm() != null)
+                ? inquiry.getProduct().getFarm().getName()
+                : null;
+
         return new InquiryResponseDTO(
             inquiry.getId(),
             buyerId,
@@ -44,6 +53,8 @@ public record InquiryResponseDTO(
             productId,
             productName,
             productUnit,
+            farmId,
+            farmName,
             inquiry.getRequestedQuantity(),
             inquiry.getMessage(),
             inquiry.getStatus(),
