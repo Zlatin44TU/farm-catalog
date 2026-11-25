@@ -4,5 +4,7 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 
 public record RegionRequestDTO(
-    @NotBlank @Size (max = 150) String name
+    @NotBlank(message = "Region name is required")
+    @Size(max = 150, message = "Region name cannot exceed 150 characters")
+    String name
 ) {}
