@@ -1,0 +1,102 @@
+package com.catalog.farm.dto;
+
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
+import java.math.BigDecimal;
+import java.util.Collections;
+import java.util.Set;
+
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
+
+import com.catalog.farm.dto.request.CategoryDTO;
+import com.catalog.farm.dto.request.FarmRequestDTO;
+import com.catalog.farm.dto.request.InquiryDTO;
+import com.catalog.farm.dto.request.ProductDTO;
+import com.catalog.farm.dto.request.RegionRequestDTO;
+import com.catalog.farm.dto.request.UserLoginDTO;
+import com.catalog.farm.dto.request.UserRegisterDTO;
+import com.catalog.farm.entity.enums.Unit;
+import com.catalog.farm.entity.enums.UserRoles;
+
+import jakarta.validation.Validation;
+import jakarta.validation.Validator;
+import jakarta.validation.ValidatorFactory;
+
+class DtoValidationTest {
+
+    private static Validator validator;
+
+    @BeforeAll
+    static void setUp() {
+        ValidatorFactory factory = Validation.buildDefaultValidatorFactory();
+        validator = factory.getValidator();
+    }
+
+    @Test
+    void testUserRegisterDTO_Valid() {
+        UserRegisterDTO dto = new UserRegisterDTO("farmer@example.com", "password123", "Ivan Ivanov", "+359888123456", UserRoles.FARMER, null);
+        assertTrue(validator.validate(dto).isEmpty());
+    }
+
+    @Test
+    void testUserRegisterDTO_InvalidEmailAndPhone() {
+        UserRegisterDTO dto = new UserRegisterDTO("invalid-email", "123", "", "abc", UserRoles.BUYER, -5L);
+        assertFalse(validator.validate(dto).isEmpty());
+    }
+
+    @Test
+    void testUserLoginDTO_Validation() {
+        UserLoginDTO valid = new UserLoginDTO("test@example.com", "secret");
+        assertTrue(validator.validate(valid).isEmpty());
+
+        UserLoginDTO invalid = new UserLoginDTO("not-an-email", "");
+        assertFalse(validator.validate(invalid).isEmpty());
+    }
+
+    @Test
+    void testCategoryDTO_Validation() {
+        CategoryDTO valid = new CategoryDTO("Fruits", "Fresh organic fruits");
+        assertTrue(validator.validate(valid).isEmpty());
+
+        CategoryDTO invalid = new CategoryDTO("", null);
+        assertFalse(validator.validate(invalid).isEmpty());
+    }
+
+    @Test
+    void testRegionRequestDTO_Validation() {
+        RegionRequestDTO valid = new RegionRequestDTO("Plovdiv Region");
+        assertTrue(validator.validate(valid).isEmpty());
+
+        RegionRequestDTO invalid = new RegionRequestDTO("   ");
+        assertFalse(validator.validate(invalid).isEmpty());
+    }
+
+    @Test
+    void testFarmRequestDTO_Validation() {
+        FarmRequestDTO valid = new FarmRequestDTO(1L, "Sunny Farm", "Bio farm", "Main Street 1", "farm@example.com", "https://farm.bg", "https://farm.bg/logo.png", Collections.emptyList(), Collections.emptyList());
+        assertTrue(validator.validate(valid).isEmpty());
+
+        FarmRequestDTO invalid = new FarmRequestDTO(null, "", null, "", "bad-email", null, null, null, null);
+        assertFalse(validator.validate(invalid).isEmpty());
+    }
+
+    @Test
+    void testInquiryDTO_Validation() {
+        InquiryDTO valid = new InquiryDTO(1L, 2L, new BigDecimal("10.50"), "Need 10kg apples", null);
+        assertTrue(validator.validate(valid).isEmpty());
+
+        InquiryDTO invalid = new InquiryDTO(-1L, null, new BigDecimal("0.00"), "a".repeat(2500), null);
+        assertFalse(validator.validate(invalid).isEmpty());
+    }
+
+    @Test
+    void testProductDTO_Validation() {
+        ProductDTO valid = new ProductDTO(1L, 2L, "Apples", "Crisp red apples", new BigDecimal("2.50"), Unit.KG, new BigDecimal("100.00"), true, "http://img.jpg", Set.of(9, 10, 11));
+        assertTrue(validator.validate(valid).isEmpty());
+
+        ProductDTO invalidMonth = new ProductDTO(1L, 2L, "Apples", "Crisp", new BigDecimal("-1.00"), Unit.KG, new BigDecimal("10.00"), true, null, Set.of(0, 13));
+        assertFalse(validator.validate(invalidMonth).isEmpty());
+    }
+}
