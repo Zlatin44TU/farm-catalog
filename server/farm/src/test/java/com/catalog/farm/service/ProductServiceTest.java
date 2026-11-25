@@ -145,8 +145,8 @@ class ProductServiceTest {
         farmerUser.setFarm(null);
         when(userRepository.findByEmail("farmer@example.com")).thenReturn(Optional.of(farmerUser));
 
-        assertThrows(ResourceNotFoundException.class, () ->
-                productService.getMyProducts("farmer@example.com", PageRequest.of(0, 10)));
+        assertThrows(ResourceNotFoundException.class,
+                () -> productService.getMyProducts("farmer@example.com", PageRequest.of(0, 10)));
     }
 
     @Test
@@ -227,8 +227,7 @@ class ProductServiceTest {
 
         List<ProductItemUpdateDTO> items = List.of(
                 new ProductItemUpdateDTO(100L, new BigDecimal("4.50"), new BigDecimal("150.00"), true),
-                new ProductItemUpdateDTO(102L, new BigDecimal("6.00"), new BigDecimal("0.00"), false)
-        );
+                new ProductItemUpdateDTO(102L, new BigDecimal("6.00"), new BigDecimal("0.00"), false));
 
         List<ProductResponseDTO> results = productService.bulkUpdate(items, "farmer@example.com");
 
@@ -252,8 +251,7 @@ class ProductServiceTest {
         when(productRepository.findById(100L)).thenReturn(Optional.of(product));
 
         List<ProductItemUpdateDTO> items = List.of(
-                new ProductItemUpdateDTO(100L, new BigDecimal("4.50"), new BigDecimal("150.00"), true)
-        );
+                new ProductItemUpdateDTO(100L, new BigDecimal("4.50"), new BigDecimal("150.00"), true));
 
         assertThrows(AccessDeniedException.class, () -> productService.bulkUpdate(items, "farmer@example.com"));
     }

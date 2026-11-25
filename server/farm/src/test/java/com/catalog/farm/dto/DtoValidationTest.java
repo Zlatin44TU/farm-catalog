@@ -40,8 +40,27 @@ class DtoValidationTest {
 
     @Test
     void testUserRegisterDTO_Valid() {
-        UserRegisterDTO dto = new UserRegisterDTO("farmer@example.com", "password123", "Ivan Ivanov", "+359888123456", UserRoles.FARMER, null);
+        UserRegisterDTO dto = new UserRegisterDTO("farmer@example.com", "Password123", "Ivan Ivanov", "+359888123456", UserRoles.FARMER, null);
         assertTrue(validator.validate(dto).isEmpty());
+    }
+
+    @Test
+    void testUserRegisterDTO_PasswordRequirements() {
+        // Too short (< 8)
+        UserRegisterDTO shortPass = new UserRegisterDTO("farmer@example.com", "Pass1", "Ivan Ivanov", "+359888123456", UserRoles.FARMER, null);
+        assertFalse(validator.validate(shortPass).isEmpty());
+
+        // No uppercase
+        UserRegisterDTO noUpper = new UserRegisterDTO("farmer@example.com", "password123", "Ivan Ivanov", "+359888123456", UserRoles.FARMER, null);
+        assertFalse(validator.validate(noUpper).isEmpty());
+
+        // No digit
+        UserRegisterDTO noDigit = new UserRegisterDTO("farmer@example.com", "Password", "Ivan Ivanov", "+359888123456", UserRoles.FARMER, null);
+        assertFalse(validator.validate(noDigit).isEmpty());
+
+        // Valid
+        UserRegisterDTO valid = new UserRegisterDTO("farmer@example.com", "SecurePass123", "Ivan Ivanov", "+359888123456", UserRoles.FARMER, null);
+        assertTrue(validator.validate(valid).isEmpty());
     }
 
     @Test

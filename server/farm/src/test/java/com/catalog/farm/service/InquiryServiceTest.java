@@ -130,9 +130,7 @@ class InquiryServiceTest {
         when(userRepository.findByEmail("buyer@example.com")).thenReturn(Optional.of(buyer));
         when(productRepository.findById(999L)).thenReturn(Optional.empty());
 
-        assertThrows(ResourceNotFoundException.class, () ->
-                inquiryService.createInquiry(dto, "buyer@example.com")
-        );
+        assertThrows(ResourceNotFoundException.class, () -> inquiryService.createInquiry(dto, "buyer@example.com"));
         verify(inquiryRepository, never()).save(any());
     }
 
@@ -145,9 +143,8 @@ class InquiryServiceTest {
         when(userRepository.findByEmail("buyer@example.com")).thenReturn(Optional.of(buyer));
         when(productRepository.findById(100L)).thenReturn(Optional.of(product));
 
-        assertThrows(SelfInquiryNotAllowedException.class, () ->
-                inquiryService.createInquiry(dto, "buyer@example.com")
-        );
+        assertThrows(SelfInquiryNotAllowedException.class,
+                () -> inquiryService.createInquiry(dto, "buyer@example.com"));
         verify(inquiryRepository, never()).save(any());
     }
 
@@ -191,7 +188,8 @@ class InquiryServiceTest {
         when(userRepository.findByEmail("farmer@example.com")).thenReturn(Optional.of(farmer));
         when(inquiryRepository.findByProductFarmId(eq(10L), any(Pageable.class))).thenReturn(page);
 
-        Page<InquiryResponseDTO> result = inquiryService.getReceivedInquiries("farmer@example.com", PageRequest.of(0, 10));
+        Page<InquiryResponseDTO> result = inquiryService.getReceivedInquiries("farmer@example.com",
+                PageRequest.of(0, 10));
 
         assertNotNull(result);
         assertEquals(1, result.getContent().size());
@@ -203,9 +201,8 @@ class InquiryServiceTest {
         farmer.setFarm(null);
         when(userRepository.findByEmail("farmer@example.com")).thenReturn(Optional.of(farmer));
 
-        assertThrows(ResourceNotFoundException.class, () ->
-                inquiryService.getReceivedInquiries("farmer@example.com", PageRequest.of(0, 10))
-        );
+        assertThrows(ResourceNotFoundException.class,
+                () -> inquiryService.getReceivedInquiries("farmer@example.com", PageRequest.of(0, 10)));
     }
 
     @Test
@@ -221,7 +218,8 @@ class InquiryServiceTest {
         when(inquiryRepository.findById(300L)).thenReturn(Optional.of(inquiry));
         when(inquiryRepository.save(any(Inquiry.class))).thenAnswer(inv -> inv.getArgument(0));
 
-        InquiryResponseDTO response = inquiryService.updateInquiryStatus(300L, InquiryStatus.ACCEPTED, "farmer@example.com");
+        InquiryResponseDTO response = inquiryService.updateInquiryStatus(300L, InquiryStatus.ACCEPTED,
+                "farmer@example.com");
 
         assertNotNull(response);
         assertEquals(InquiryStatus.ACCEPTED, response.status());
@@ -242,7 +240,8 @@ class InquiryServiceTest {
         when(inquiryRepository.findById(301L)).thenReturn(Optional.of(inquiry));
         when(inquiryRepository.save(any(Inquiry.class))).thenAnswer(inv -> inv.getArgument(0));
 
-        InquiryResponseDTO response = inquiryService.updateInquiryStatus(301L, InquiryStatus.REJECTED, "farmer@example.com");
+        InquiryResponseDTO response = inquiryService.updateInquiryStatus(301L, InquiryStatus.REJECTED,
+                "farmer@example.com");
 
         assertNotNull(response);
         assertEquals(InquiryStatus.REJECTED, response.status());
@@ -264,9 +263,8 @@ class InquiryServiceTest {
         when(userRepository.findByEmail("farmer@example.com")).thenReturn(Optional.of(farmer));
         when(inquiryRepository.findById(302L)).thenReturn(Optional.of(inquiry));
 
-        assertThrows(AccessDeniedException.class, () ->
-                inquiryService.updateInquiryStatus(302L, InquiryStatus.ACCEPTED, "farmer@example.com")
-        );
+        assertThrows(AccessDeniedException.class,
+                () -> inquiryService.updateInquiryStatus(302L, InquiryStatus.ACCEPTED, "farmer@example.com"));
         verify(inquiryRepository, never()).save(any());
     }
 
@@ -275,20 +273,17 @@ class InquiryServiceTest {
         farmer.setFarm(null);
         when(userRepository.findByEmail("farmer@example.com")).thenReturn(Optional.of(farmer));
 
-        assertThrows(AccessDeniedException.class, () ->
-                inquiryService.updateInquiryStatus(303L, InquiryStatus.ACCEPTED, "farmer@example.com")
-        );
+        assertThrows(AccessDeniedException.class,
+                () -> inquiryService.updateInquiryStatus(303L, InquiryStatus.ACCEPTED, "farmer@example.com"));
     }
 
     @Test
     void testUpdateInquiryStatus_InvalidNewStatus_PendingOrNull() {
-        assertThrows(InvalidOperationException.class, () ->
-                inquiryService.updateInquiryStatus(304L, InquiryStatus.PENDING, "farmer@example.com")
-        );
+        assertThrows(InvalidOperationException.class,
+                () -> inquiryService.updateInquiryStatus(304L, InquiryStatus.PENDING, "farmer@example.com"));
 
-        assertThrows(InvalidOperationException.class, () ->
-                inquiryService.updateInquiryStatus(304L, null, "farmer@example.com")
-        );
+        assertThrows(InvalidOperationException.class,
+                () -> inquiryService.updateInquiryStatus(304L, null, "farmer@example.com"));
     }
 
     @Test
@@ -302,9 +297,8 @@ class InquiryServiceTest {
         when(userRepository.findByEmail("farmer@example.com")).thenReturn(Optional.of(farmer));
         when(inquiryRepository.findById(305L)).thenReturn(Optional.of(inquiry));
 
-        assertThrows(InvalidOperationException.class, () ->
-                inquiryService.updateInquiryStatus(305L, InquiryStatus.REJECTED, "farmer@example.com")
-        );
+        assertThrows(InvalidOperationException.class,
+                () -> inquiryService.updateInquiryStatus(305L, InquiryStatus.REJECTED, "farmer@example.com"));
         verify(inquiryRepository, never()).save(any());
     }
 }
