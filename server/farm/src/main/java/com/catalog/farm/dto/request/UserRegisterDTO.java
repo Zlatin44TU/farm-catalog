@@ -15,7 +15,8 @@ public record UserRegisterDTO(
     String email,
 
     @NotBlank(message = "Password is required")
-    @Size(min = 6, max = 100, message = "Password must be between 6 and 100 characters")
+    @Size(min = 8, max = 64, message = "Паролата трябва да е между 8 и 64 символа")
+    @Pattern(regexp = "^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z]).*$", message = "Паролата трябва да съдържа поне една главна буква, една малка буква и една цифра")
     String password,
 
     @NotBlank(message = "Full name is required")
