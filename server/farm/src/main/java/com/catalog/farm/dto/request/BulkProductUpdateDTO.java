@@ -3,6 +3,8 @@ package com.catalog.farm.dto.request;
 import java.math.BigDecimal;
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonAlias;
+
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.DecimalMin;
 import jakarta.validation.constraints.Digits;
@@ -15,11 +17,12 @@ public record BulkProductUpdateDTO(
     List<@Valid ProductItemUpdateDTO> items
 ) {
     public record ProductItemUpdateDTO(
+        @JsonAlias({"id", "productId"})
         @NotNull(message = "Product ID is required")
         @Positive(message = "Product ID must be positive")
-        Long productId,
+        Long id,
 
-        @DecimalMin(value = "0.00", message = "Price cannot be negative")
+        @DecimalMin(value = "0.01", message = "Price must be greater than 0.00")
         @Digits(integer = 8, fraction = 2, message = "Price must have up to 8 integer digits and 2 decimals")
         BigDecimal price,
 
@@ -27,6 +30,7 @@ public record BulkProductUpdateDTO(
         @Digits(integer = 8, fraction = 2, message = "Stock quantity must have up to 8 integer digits and 2 decimals")
         BigDecimal stockQuantity,
 
-        Boolean available
+        @JsonAlias({"isAvailable", "available"})
+        Boolean isAvailable
     ) {}
 }

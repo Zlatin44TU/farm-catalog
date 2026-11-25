@@ -5,11 +5,13 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.math.BigDecimal;
 import java.util.Collections;
+import java.util.List;
 import java.util.Set;
 
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
+import com.catalog.farm.dto.request.BulkProductUpdateDTO;
 import com.catalog.farm.dto.request.CategoryDTO;
 import com.catalog.farm.dto.request.FarmRequestDTO;
 import com.catalog.farm.dto.request.InquiryDTO;
@@ -96,7 +98,34 @@ class DtoValidationTest {
         ProductDTO valid = new ProductDTO(1L, 2L, "Apples", "Crisp red apples", new BigDecimal("2.50"), Unit.KG, new BigDecimal("100.00"), true, "http://img.jpg", Set.of(9, 10, 11));
         assertTrue(validator.validate(valid).isEmpty());
 
+        // Price <= 0 is invalid
+        ProductDTO zeroPrice = new ProductDTO(1L, 2L, "Apples", "Crisp", new BigDecimal("0.00"), Unit.KG, new BigDecimal("10.00"), true, null, Set.of(5));
+        assertFalse(validator.validate(zeroPrice).isEmpty());
+
+        // Negative price and invalid month
         ProductDTO invalidMonth = new ProductDTO(1L, 2L, "Apples", "Crisp", new BigDecimal("-1.00"), Unit.KG, new BigDecimal("10.00"), true, null, Set.of(0, 13));
         assertFalse(validator.validate(invalidMonth).isEmpty());
+
+        // Empty seasonMonths
+        ProductDTO emptyMonths = new ProductDTO(1L, 2L, "Apples", "Crisp", new BigDecimal("2.50"), Unit.KG, new BigDecimal("10.00"), true, null, Collections.emptySet());
+        assertFalse(validator.validate(emptyMonths).isEmpty());
+
+        // Name too short (< 2 chars)
+        ProductDTO shortName = new ProductDTO(1L, 2L, "A", "Crisp", new BigDecimal("2.50"), Unit.KG, new BigDecimal("10.00"), true, null, Set.of(5));
+        assertFalse(validator.validate(shortName).isEmpty());
+    }
+
+    @Test
+    void testBulkProductUpdateDTO_Validation() {
+        BulkProductUpdateDTO.ProductItemUpdateDTO item = new BulkProductUpdateDTO.ProductItemUpdateDTO(1L, new BigDecimal("4.50"), new BigDecimal("150.00"), true);
+        BulkProductUpdateDTO valid = new BulkProductUpdateDTO(List.of(item));
+        assertTrue(validator.validate(valid).isEmpty());
+
+        BulkProductUpdateDTO empty = new BulkProductUpdateDTO(Collections.emptyList());
+        assertFalse(validator.validate(empty).isEmpty());
+
+        BulkProductUpdateDTO.ProductItemUpdateDTO invalidItem = new BulkProductUpdateDTO.ProductItemUpdateDTO(-1L, new BigDecimal("0.00"), new BigDecimal("-5.00"), true);
+        BulkProductUpdateDTO invalid = new BulkProductUpdateDTO(List.of(invalidItem));
+        assertFalse(validator.validate(invalid).isEmpty());
     }
 }

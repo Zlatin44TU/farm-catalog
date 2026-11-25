@@ -27,55 +27,58 @@ import lombok.Getter;
 import lombok.Setter;
 
 @Entity
-@Table(name="products")
-@Getter 
+@Table(name = "products")
+@Getter
 @Setter
 @NoArgsConstructor
 public class Product {
 	@Id
-	@GeneratedValue(strategy=GenerationType.IDENTITY) // if using Aiven DB service
+	@GeneratedValue(strategy = GenerationType.IDENTITY) // if using Aiven DB service
 	private Long id;
-	
-	@ManyToOne 
+
+	@ManyToOne
 	@JoinColumn(name = "farm_id", nullable = false)
 	private FarmProfile farm; // Reference to the farm the product belongs to
-	
-	@ManyToOne 
-	@JoinColumn (name = "category_id", nullable = false)
+
+	@ManyToOne
+	@JoinColumn(name = "category_id", nullable = false)
 	private Category category; // Reference to the category the product belongs to
 
-	@Column (nullable = false, length = 150)
+	@Column(nullable = false, length = 150)
 	private String name;
 
-	@Column (columnDefinition = "TEXT")
+	@Column(columnDefinition = "TEXT")
 	private String description;
 
-	@Column (nullable = false, precision = 10, scale = 2)
+	@Column(nullable = false, precision = 10, scale = 2)
 	private BigDecimal price;
 
-	@Enumerated (EnumType.STRING)
-	@Column (nullable = false)
+	@Enumerated(EnumType.STRING)
+	@Column(nullable = false)
 	private Unit unit;
 
-	@Column (name = "stock_quantity", nullable = false, precision = 10, scale = 2)
+	@Column(name = "stock_quantity", nullable = false, precision = 10, scale = 2)
 	private BigDecimal stockQuantity;
-	
-	@Column (name = "is_available", nullable = false)
-	private boolean available = true;
-	
-	@Column (name = "image_url", length = 255)
-	private String imgUrl; 
 
-	@ElementCollection 
-	@CollectionTable (name = "product_seasonality",
-		joinColumns = @JoinColumn(name = "product_id"))
-	@Column(name = "month_numner", nullable = false)
+	@Column(name = "is_available", nullable = false)
+	private boolean available = true;
+
+	@Column(name = "image_url", length = 255)
+	private String imgUrl;
+
+	@ElementCollection
+	@CollectionTable(name = "product_seasonality", joinColumns = @JoinColumn(name = "product_id"))
+	@Column(name = "month_number", nullable = false)
 	private Set<Integer> seasonMonths = new HashSet<>();
 
-	@CreationTimestamp 
-	@Column (updatable = false)
+	@jakarta.persistence.Version
+	private Long version;
+
+	@CreationTimestamp
+	@Column(updatable = false)
 	private LocalDateTime created_at;
 
-	@UpdateTimestamp 
-	private LocalDateTime updated_at; 
+	@UpdateTimestamp
+	private LocalDateTime updated_at;
+
 }

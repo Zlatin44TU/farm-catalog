@@ -33,23 +33,25 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
-            .csrf(AbstractHttpConfigurer::disable)
-            .cors(Customizer.withDefaults())
-            .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-            .exceptionHandling(exception -> exception.authenticationEntryPoint(jwtAuthenticationEntryPoint))
-            .authorizeHttpRequests(authorize -> authorize
-                // Public auth endpoints
-                .requestMatchers("/api/auth/register", "/api/auth/login").permitAll()
-                // Swagger / OpenAPI docs
-                .requestMatchers("/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html").permitAll()
-                // Explicitly protect authenticated /me endpoints before public wildcards
-                .requestMatchers("/api/auth/me", "/api/farms/me").authenticated()
-                // Public GET endpoints for catalog browsing
-                .requestMatchers(HttpMethod.GET, "/api/products/**", "/api/farms/**", "/api/categories/**", "/api/regions/**").permitAll()
-                // Any other request requires authentication
-                .anyRequest().authenticated()
-            )
-            .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
+                .csrf(AbstractHttpConfigurer::disable)
+                .cors(Customizer.withDefaults())
+                .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+                .exceptionHandling(exception -> exception.authenticationEntryPoint(jwtAuthenticationEntryPoint))
+                .authorizeHttpRequests(authorize -> authorize
+                        // Public auth endpoints
+                        .requestMatchers("/api/auth/register", "/api/auth/login").permitAll()
+                        // Swagger / OpenAPI docs
+                        .requestMatchers("/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html").permitAll()
+                        // Explicitly protect authenticated /me and farmer-specific endpoints before
+                        // public wildcards
+                        .requestMatchers("/api/auth/me", "/api/farms/me", "/api/products/my-products").authenticated()
+                        // Public GET endpoints for catalog browsing
+                        .requestMatchers(HttpMethod.GET, "/api/products/**", "/api/farms/**", "/api/categories/**",
+                                "/api/regions/**")
+                        .permitAll()
+                        // Any other request requires authentication
+                        .anyRequest().authenticated())
+                .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
     }
